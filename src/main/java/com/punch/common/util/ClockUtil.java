@@ -27,6 +27,11 @@ public class ClockUtil {
 		return new Date(random);
 	}
 
+	/**
+	 * 获取随机下班打卡时间 17:10-18:00直接
+	 *
+	 * @return Date
+	 */
 	public static Date getPunchOffTime() {
 		LocalDate now = LocalDate.now();
 		LocalTime beginTime = LocalTime.of(17, 10);

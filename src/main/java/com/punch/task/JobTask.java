@@ -2,6 +2,7 @@ package com.punch.task;
 
 import static com.punch.entity.Tables.OA_USER;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -52,16 +53,21 @@ public class JobTask extends QuartzJobBean {
 				if (null == map.get("push_id")) {
 					return;
 				}
-				// 上班打卡
-				map.put("punchTask", PunchType.PUNCH_ON);
-				apiBootQuartzService.newJob(ApiBootOnceJobWrapper.Context().jobClass(PunchTask.class)
-						.param(ApiBootJobParamWrapper.wrapper().put("map", JSON.toJSONString(map)))
-						.startAtTime(ClockUtil.getPunchOnTime()).wrapper());
-				// 下班打卡
-				map.put("punchTask", PunchType.PUNCH_OFF);
-				apiBootQuartzService.newJob(ApiBootOnceJobWrapper.Context().jobClass(PunchTask.class)
-						.param(ApiBootJobParamWrapper.wrapper().put("map", JSON.toJSONString(map)))
-						.startAtTime(ClockUtil.getPunchOffTime()).wrapper());
+				if (LocalTime.now().isBefore(LocalTime.of(7, 30))) {
+					// 上班打卡
+					map.put("punchTask", PunchType.PUNCH_ON);
+					apiBootQuartzService.newJob(ApiBootOnceJobWrapper.Context().jobClass(PunchTask.class)
+							.param(ApiBootJobParamWrapper.wrapper().put("map", JSON.toJSONString(map)))
+							.startAtTime(ClockUtil.getPunchOnTime()).wrapper());
+				}
+
+				if (LocalTime.now().isBefore(LocalTime.of(16, 30))) {
+					// 下班打卡
+					map.put("punchTask", PunchType.PUNCH_OFF);
+					apiBootQuartzService.newJob(ApiBootOnceJobWrapper.Context().jobClass(PunchTask.class)
+							.param(ApiBootJobParamWrapper.wrapper().put("map", JSON.toJSONString(map)))
+							.startAtTime(ClockUtil.getPunchOffTime()).wrapper());
+				}
 			}
 		}
 	}
