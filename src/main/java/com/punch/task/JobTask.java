@@ -40,8 +40,6 @@ public class JobTask extends QuartzJobBean {
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
 		String workDay = "0";
-		log.info("定时任务Job Key ： {}", context.getJobDetail().getKey());
-		log.info("定时任务执行时所携带的参数：{}", JSON.toJSONString(context.getJobDetail().getJobDataMap()));
 		String result = OkHttpUtil.get("http://tool.bitefu.net/jiari?d=today");
 		if (!result.equals(workDay)) {
 			return;

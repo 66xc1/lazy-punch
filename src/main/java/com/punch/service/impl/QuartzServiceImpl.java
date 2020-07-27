@@ -42,7 +42,10 @@ public class QuartzServiceImpl implements IQuartzService {
 	 */
 	@Override
 	public Result<List<Map<String, Object>>> getQuartzList() {
-		return Result.success(create.select().from(SYS_QUARTZ).orderBy(SYS_QUARTZ.CREATE_TIME.desc()).fetchMaps());
+		return Result.success(create
+				.select(SYS_QUARTZ.JOB_KEY.as("jobKey"), SYS_QUARTZ.BEAN_NAME.as("beanName"), SYS_QUARTZ.CRON,
+						SYS_QUARTZ.STATUS, SYS_QUARTZ.REMARK, SYS_QUARTZ.CREATE_TIME.as("createTime"))
+				.from(SYS_QUARTZ).orderBy(SYS_QUARTZ.CREATE_TIME.desc()).fetchMaps());
 	}
 
 	/**
