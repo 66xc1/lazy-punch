@@ -31,7 +31,6 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
-    compile group: 'com.parkingwang', name: 'okhttp3-loginterceptor', version: '0.5'
     compileOnly 'org.projectlombok:lombok'
     compileOnly 'org.jooq:jooq-codegen'
     runtimeOnly 'mysql:mysql-connector-java'
