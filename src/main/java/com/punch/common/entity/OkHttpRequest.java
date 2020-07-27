@@ -39,6 +39,8 @@ public class OkHttpRequest {
 
 	private final AddUserDto user;
 
+	private final String chrome;
+
 	private String accessToken;
 
 	private String toUrl;
@@ -47,8 +49,9 @@ public class OkHttpRequest {
 
 	String punchUrl = "http://115.238.110.210:3690/api/hrm/kq/attendanceButton/punchButton";
 
-	public OkHttpRequest(AddUserDto user) {
+	public OkHttpRequest(AddUserDto user, String chrome) {
 		this.user = user;
+		this.chrome = chrome;
 		this.client = new OkHttpClient.Builder().retryOnConnectionFailure(true).cookieJar(new CookieJar() {
 
 			private final Map<String, List<Cookie>> cookiesMap = new ConcurrentHashMap<>();
@@ -130,7 +133,7 @@ public class OkHttpRequest {
 		String host = "http://115.238.110.210";
 		lock.lock();
 		try {
-			System.setProperty("webdriver.chrome.driver", "F:\\chromedriver_win32\\chromedriver.exe");
+			System.setProperty("webdriver.chrome.driver", this.chrome);
 			// 创建chrome参数对象
 			ChromeOptions options = new ChromeOptions();
 

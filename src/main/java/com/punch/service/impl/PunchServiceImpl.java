@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,9 @@ public class PunchServiceImpl implements IPunchService {
 
 	@Resource
 	private AipOcr aipOcr;
+
+	@Value("${chrome}")
+	private String chrome;
 
 	/**
 	 * 打卡
@@ -111,7 +115,7 @@ public class PunchServiceImpl implements IPunchService {
 					dto.setDeviceId(user.getDeviceId());
 					dto.setOsVersion(user.getOsVersion());
 					// 登录
-					OkHttpRequest request = new OkHttpRequest(dto);
+					OkHttpRequest request = new OkHttpRequest(dto, this.chrome);
 					Result<JSONObject> result = request.login();
 					if (result.isState()) {
 						// 授权

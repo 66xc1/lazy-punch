@@ -82,3 +82,11 @@ locate:
       latitude: 30.325812174479168
     - longitude: 120.18644015842014
       latitude: 30.325816514756944
+
+chrome: F:\chromedriver_win32\chromedriver.exe
+
+---
+spring:
+  profiles: prd
+chrome: /usr/local/bin/chromedriver
+
