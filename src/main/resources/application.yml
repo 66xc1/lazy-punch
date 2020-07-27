@@ -1,0 +1,59 @@
+server:
+  port: 8080
+  tomcat:
+    threads:
+      min-spare: 10
+      max: 50
+    uri-encoding: UTF-8
+spring:
+  datasource:
+    hikari:
+      auto-commit: true
+      minimum-idle: 5
+      maximum-pool-size: 200
+      idle-timeout: 300000
+      pool-name: HikariCP
+      max-lifetime: 500000
+      connection-timeout: 30000
+      connection-test-query: select 1
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/punch?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+    username: root
+    password: 12345678
+  redis:
+    lettuce:
+      pool:
+        min-idle: 0
+        max-wait: 60S
+        max-idle: 10
+        time-between-eviction-runs: 1H
+        max-active: 100
+    host: 127.0.0.1
+    database: 7
+    port: 6379
+    timeout: 30S
+
+oa:
+  url:
+    captcha: http://115.238.110.210:8998/emp/captcha
+    login: http://115.238.110.210:8998/emp/passport/login
+    auth: http://115.238.110.210:8998/emp/api/agent/client/link/home?agentid=-1&corpid=em4ce4068d933411eaaaec000c2985ba71&em_client_type=2
+    punch: http://115.238.110.210:3690/api/hrm/kq/attendanceButton/punchButton
+
+api:
+  boot:
+    quartz:
+      job-store-type: jdbc
+
+locate:
+  points:
+    - longitude: 120.1862708875868
+      latitude: 30.325785047743057
+    - longitude: 120.18634223090278
+      latitude: 30.325776909722222
+    - longitude: 120.1863113064236
+      latitude: 30.32577935112847
+    - longitude: 120.18642388237848
+      latitude: 30.325816243489584
+
