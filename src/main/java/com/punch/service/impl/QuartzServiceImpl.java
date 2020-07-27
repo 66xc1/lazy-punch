@@ -11,6 +11,8 @@ import javax.annotation.Resource;
 import org.jooq.DSLContext;
 import org.minbox.framework.api.boot.plugin.quartz.ApiBootQuartzService;
 import org.minbox.framework.api.boot.plugin.quartz.wrapper.support.ApiBootCronJobWrapper;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Service;
 
@@ -105,6 +107,22 @@ public class QuartzServiceImpl implements IQuartzService {
 		apiBootQuartzService.resumeJob(jobKey);
 		create.update(SYS_QUARTZ).set(SYS_QUARTZ.STATUS, 1).where(SYS_QUARTZ.JOB_KEY.eq(jobKey))
 				.and(SYS_QUARTZ.STATUS.eq(0)).execute();
+		return Result.success();
+	}
+
+	/**
+	 * 运行定时任务
+	 *
+	 * @param jobKey jobKey
+	 * @return result
+	 */
+	@Override
+	public Result<String> runQuartz(String jobKey) {
+		try {
+			apiBootQuartzService.getScheduler().triggerJob(JobKey.jobKey(jobKey));
+		} catch (SchedulerException e) {
+			return Result.fail("运行失败" + e.getMessage());
+		}
 		return Result.success();
 	}
 

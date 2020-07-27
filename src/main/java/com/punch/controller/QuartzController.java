@@ -1,26 +1,22 @@
 package com.punch.controller;
 
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.minbox.framework.api.boot.plugin.quartz.ApiBootQuartzService;
-import org.minbox.framework.api.boot.plugin.quartz.wrapper.ApiBootJobParamWrapper;
-import org.minbox.framework.api.boot.plugin.quartz.wrapper.support.ApiBootOnceJobWrapper;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
 import com.punch.common.entity.Result;
 import com.punch.model.JobKeyDto;
 import com.punch.model.QuartzDto;
 import com.punch.model.UpdQuartzDto;
 import com.punch.service.IQuartzService;
-import com.punch.task.PunchTask;
 
 /**
  * @author xiachao
@@ -78,24 +74,12 @@ public class QuartzController {
 		return quartzService.resumeQuartz(jobKeyDto.getJobKey());
 	}
 
-	@Resource
-	private ApiBootQuartzService apiBootQuartzService;
-
-	@PostMapping(value = "/test")
-	public Result<String> test() {
-		Map<String, Object> map = new HashMap<>(10);
-		map.put("test", "1");
-		map.put("solo", 222222222);
-
-		String jobKey = apiBootQuartzService.newJob(ApiBootOnceJobWrapper.Context().jobClass(PunchTask.class)
-				.param(ApiBootJobParamWrapper.wrapper().put("map", JSON.toJSONString(map)))
-				.startAtTime(new Date(System.currentTimeMillis() + 10000)).wrapper());
-		return Result.success(jobKey);
+	@PostMapping(value = "/runQuartz")
+	public Result<String> runQuartz(@RequestBody @Validated JobKeyDto jobKeyDto, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return Result.fail(bindingResult);
+		}
+		return quartzService.runQuartz(jobKeyDto.getJobKey());
 	}
 
-	@PostMapping(value = "/del")
-	public Result<String> del(@RequestParam String jobKey) {
-		apiBootQuartzService.deleteJob(jobKey);
-		return Result.success();
-	}
 }

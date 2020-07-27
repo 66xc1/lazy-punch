@@ -59,4 +59,12 @@ public interface IQuartzService {
 	 * @return result
 	 */
 	Result<String> resumeQuartz(String jobKey);
+
+	/**
+	 * 运行定时任务
+	 *
+	 * @param jobKey jobKey
+	 * @return result
+	 */
+	Result<String> runQuartz(String jobKey);
 }
