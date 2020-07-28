@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 
 import org.jooq.DSLContext;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.Async;
@@ -53,8 +54,8 @@ public class PunchServiceImpl implements IPunchService {
 	@Resource
 	private AipOcr aipOcr;
 
-	@Value("${chrome}")
-	private String chrome;
+	@Resource
+	private ChromeDriverService service;
 
 	/**
 	 * 打卡
@@ -66,7 +67,7 @@ public class PunchServiceImpl implements IPunchService {
 	@Override
 	@Async
 	public void punch(String loginId, String pushId, PunchType type) {
-		Integer andriod = 3;
+		Integer android = 3;
 		OaUserRecord user = create.fetchOne(OA_USER, OA_USER.LOGIN_ID.eq(loginId));
 		// 用户已停用，停止打卡
 		if (user.getEnable() == 0) {
@@ -82,7 +83,7 @@ public class PunchServiceImpl implements IPunchService {
 		dto.setDeviceId(user.getDeviceId());
 		dto.setOsVersion(user.getOsVersion());
 		dto.setClientType(user.getClientType());
-		if (dto.getClientType().equals(andriod)) {
+		if (dto.getClientType().equals(android)) {
 			dto.setLoginUUID(user.getLoginuuid());
 		}
 		boolean res = tryPunch(dto, maxPunchNum, punchNum, getRandomPoint());
@@ -119,7 +120,7 @@ public class PunchServiceImpl implements IPunchService {
 					dto.setCaptchaText(captchaText);
 					dto.setKey(uuid);
 					// 登录
-					OkHttpRequest request = new OkHttpRequest(dto, this.chrome);
+					OkHttpRequest request = new OkHttpRequest(dto, service);
 					Result<JSONObject> result = request.login();
 					if (result.isState()) {
 						// 授权

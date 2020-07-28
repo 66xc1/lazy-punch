@@ -9,14 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -39,19 +38,17 @@ public class OkHttpRequest {
 
 	private final AddUserDto user;
 
-	private final String chrome;
+	private final ChromeDriverService service;
 
 	private String accessToken;
 
 	private String toUrl;
 
-	private final Lock lock = new ReentrantLock(true);
-
 	String punchUrl = "http://115.238.110.210:3690/api/hrm/kq/attendanceButton/punchButton";
 
-	public OkHttpRequest(AddUserDto user, String chrome) {
+	public OkHttpRequest(AddUserDto user, ChromeDriverService service) {
 		this.user = user;
-		this.chrome = chrome;
+		this.service = service;
 		this.client = new OkHttpClient.Builder().retryOnConnectionFailure(true).cookieJar(new CookieJar() {
 
 			private final Map<String, List<Cookie>> cookiesMap = new ConcurrentHashMap<>();
@@ -132,45 +129,41 @@ public class OkHttpRequest {
 		String languageIdWeaver;
 		String jSessionId;
 		String host = "http://115.238.110.210";
-		lock.lock();
-		try {
-			System.setProperty("webdriver.chrome.driver", this.chrome);
-			// 创建chrome参数对象
-			ChromeOptions options = new ChromeOptions();
+//			System.setProperty("webdriver.chrome.driver", this.chrome);
+		// 创建chrome参数对象
+		ChromeOptions options = new ChromeOptions();
 
-			// 浏览器后台运行
-			options.addArguments("--headless");
-			options.addArguments("--disable-gpu");
-			options.addArguments("window-size=1024,768");
-			options.addArguments("--no-sandbox");
-			options.addArguments("--verbose");
-			options.addArguments("--whitelisted-ips=");
-			options.addArguments("blink-settings=imagesEnabled=false");
-			options.addArguments("--disable-javascript");
+		// 浏览器后台运行
+		options.addArguments("--headless");
+		options.addArguments("--disable-gpu");
+		options.addArguments("window-size=1024,768");
+		options.addArguments("--no-sandbox");
+		options.addArguments("--verbose");
+		options.addArguments("--whitelisted-ips=");
+		options.addArguments("blink-settings=imagesEnabled=false");
+		options.addArguments("--disable-javascript");
 
-			WebDriver driver = new ChromeDriver(options);
+		WebDriver driver = new ChromeDriver(service, options);
 
-			driver.get(toUrl);
+		driver.get(toUrl);
 
-			WebDriverWait wait = new WebDriverWait(driver, 20);
-			wait.until(ExpectedConditions.presenceOfElementLocated(By.id("more")
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("more")
 //					.cssSelector("#entrance-page")
-			));
-			Set<org.openqa.selenium.Cookie> coo = driver.manage().getCookies();
-			log.info("coo={}", coo);
+		));
+		Set<org.openqa.selenium.Cookie> coo = driver.manage().getCookies();
+		log.info("coo={}", coo);
 
-			loginIdWeaver = coo.stream().filter(cookie -> "loginidweaver".equals(cookie.getName()))
-					.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
-			languageIdWeaver = coo.stream().filter(cookie -> "languageidweaver".equals(cookie.getName()))
-					.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
-			jSessionId = coo.stream().filter(cookie -> "ecology_JSessionid".equals(cookie.getName()))
-					.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
+		loginIdWeaver = coo.stream().filter(cookie -> "loginidweaver".equals(cookie.getName()))
+				.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
+		languageIdWeaver = coo.stream().filter(cookie -> "languageidweaver".equals(cookie.getName()))
+				.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
+		jSessionId = coo.stream().filter(cookie -> "ecology_JSessionid".equals(cookie.getName()))
+				.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
 
-			driver.close();
-			driver.quit();
-		} finally {
-			lock.unlock();
-		}
+		driver.close();
+		driver.quit();
+
 		if (null != loginIdWeaver && null != languageIdWeaver && null != jSessionId) {
 			List<okhttp3.Cookie> cookieList = new ArrayList<>();
 			okhttp3.Cookie cookie1 = new okhttp3.Cookie.Builder().name("loginidweaver").value(loginIdWeaver)

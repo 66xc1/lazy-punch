@@ -10,7 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.jooq.DSLContext;
-import org.springframework.beans.factory.annotation.Value;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +43,8 @@ public class UserServiceImpl implements IUserService {
 	@Resource
 	private IPunchService punchService;
 
-	@Value("${chrome}")
-	private String chrome;
+	@Resource
+	private ChromeDriverService service;
 
 	/**
 	 * 新增用户
@@ -170,7 +170,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	private Result<JSONObject> login(AddUserDto addUserDto) {
-		OkHttpRequest request = new OkHttpRequest(addUserDto, this.chrome);
+		OkHttpRequest request = new OkHttpRequest(addUserDto, service);
 		Result<JSONObject> result = request.login();
 		if (!result.isState()) {
 			return Result.fail(result.getMsg());
