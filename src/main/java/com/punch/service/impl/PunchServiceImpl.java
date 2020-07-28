@@ -66,6 +66,7 @@ public class PunchServiceImpl implements IPunchService {
 	@Override
 	@Async
 	public void punch(String loginId, String pushId, PunchType type) {
+		Integer andriod = 3;
 		OaUserRecord user = create.fetchOne(OA_USER, OA_USER.LOGIN_ID.eq(loginId));
 		// 用户已停用，停止打卡
 		if (user.getEnable() == 0) {
@@ -73,7 +74,18 @@ public class PunchServiceImpl implements IPunchService {
 		}
 		int maxPunchNum = 50;
 		int punchNum = 0;
-		boolean res = tryPunch(loginId, user, maxPunchNum, punchNum, getRandomPoint());
+		AddUserDto dto = new AddUserDto();
+		dto.setLoginId(loginId);
+		dto.setPassword(user.getPassword());
+		dto.setClientModel(user.getClientModel());
+		dto.setDeviceName(user.getDeviceName());
+		dto.setDeviceId(user.getDeviceId());
+		dto.setOsVersion(user.getOsVersion());
+		dto.setClientType(user.getClientType());
+		if (dto.getClientType().equals(andriod)) {
+			dto.setLoginUUID(user.getLoginuuid());
+		}
+		boolean res = tryPunch(dto, maxPunchNum, punchNum, getRandomPoint());
 		if (!res) {
 			create.update(OA_USER).set(OA_USER.ENABLE, 0).where(OA_USER.LOGIN_ID.eq(loginId)).execute();
 			// 失败通知
@@ -90,8 +102,7 @@ public class PunchServiceImpl implements IPunchService {
 		return points.get(new Random().nextInt(size));
 	}
 
-	private boolean tryPunch(String loginId, OaUserRecord user, int maxPunchNum, int punchNum,
-			LocationProperties.Point randomPoint) {
+	private boolean tryPunch(AddUserDto dto, int maxPunchNum, int punchNum, LocationProperties.Point randomPoint) {
 		while (punchNum < maxPunchNum) {
 			punchNum++;
 			String uuid = UUID.randomUUID().toString();
@@ -105,21 +116,14 @@ public class PunchServiceImpl implements IPunchService {
 			if (captcha.getInt("words_result_num") == 1) {
 				String captchaText = captcha.getJSONArray("words_result").getJSONObject(0).getString("words");
 				if (captchaText.length() == 4) {
-					AddUserDto dto = new AddUserDto();
 					dto.setCaptchaText(captchaText);
-					dto.setLoginId(loginId);
 					dto.setKey(uuid);
-					dto.setPassword(user.getPassword());
-					dto.setClientModel(user.getClientModel());
-					dto.setDeviceName(user.getDeviceName());
-					dto.setDeviceId(user.getDeviceId());
-					dto.setOsVersion(user.getOsVersion());
 					// 登录
 					OkHttpRequest request = new OkHttpRequest(dto, this.chrome);
 					Result<JSONObject> result = request.login();
 					if (result.isState()) {
 						// 授权
-						if (request.auth()) {
+						if (request.auth(dto.getClientType())) {
 							// 获取cookies
 							if (request.getCookies()) {
 								// 打卡

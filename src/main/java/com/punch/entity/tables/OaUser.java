@@ -18,7 +18,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row13;
+import org.jooq.Row15;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -34,7 +34,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class OaUser extends TableImpl<OaUserRecord> {
 
-    private static final long serialVersionUID = 893287443;
+    private static final long serialVersionUID = 48449642;
 
     /**
      * The reference instance of <code>punch.oa_user</code>
@@ -113,6 +113,16 @@ public class OaUser extends TableImpl<OaUserRecord> {
      * The column <code>punch.oa_user.create_time</code>. 新增时间
      */
     public final TableField<OaUserRecord, LocalDateTime> CREATE_TIME = createField(DSL.name("create_time"), org.jooq.impl.SQLDataType.LOCALDATETIME, this, "新增时间");
+
+    /**
+     * The column <code>punch.oa_user.client_type</code>. 设备类型 2 IOS、3安卓
+     */
+    public final TableField<OaUserRecord, Integer> CLIENT_TYPE = createField(DSL.name("client_type"), org.jooq.impl.SQLDataType.INTEGER, this, "设备类型 2 IOS、3安卓");
+
+    /**
+     * The column <code>punch.oa_user.loginUUID</code>. 登录uuid
+     */
+    public final TableField<OaUserRecord, String> LOGINUUID = createField(DSL.name("loginUUID"), org.jooq.impl.SQLDataType.VARCHAR(36), this, "登录uuid");
 
     /**
      * Create a <code>punch.oa_user</code> table reference
@@ -194,11 +204,11 @@ public class OaUser extends TableImpl<OaUserRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row13 type methods
+    // Row15 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row13<String, String, String, String, String, String, String, String, String, String, Integer, String, LocalDateTime> fieldsRow() {
-        return (Row13) super.fieldsRow();
+    public Row15<String, String, String, String, String, String, String, String, String, String, Integer, String, LocalDateTime, Integer, String> fieldsRow() {
+        return (Row15) super.fieldsRow();
     }
 }

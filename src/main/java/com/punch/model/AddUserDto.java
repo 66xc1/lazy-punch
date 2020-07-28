@@ -3,6 +3,7 @@ package com.punch.model;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.punch.common.constans.GlobalConstants;
@@ -18,12 +19,15 @@ public class AddUserDto implements Serializable {
 
 	private static final long serialVersionUID = -7111546397680125988L;
 
+	public String loginUUID;
+
 	@NotBlank(message = "验证码不能为空")
 	@JSONField(name = "captcha_text")
 	public String captchaText;
 
 	@JSONField(name = "client_type")
-	public Integer clientType = GlobalConstants.CLIENT_TYPE;
+	@NotNull(message = "系统类型不能为空")
+	public Integer clientType;
 
 	@JSONField(name = "login_type")
 	public Integer loginType = GlobalConstants.LOGIN_TYPE;

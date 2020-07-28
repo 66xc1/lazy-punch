@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class OaUser implements Serializable {
 
-    private static final long serialVersionUID = -777070684;
+    private static final long serialVersionUID = -1321093541;
 
     private String        id;
     private String        loginId;
@@ -32,6 +32,8 @@ public class OaUser implements Serializable {
     private Integer       enable;
     private String        pushId;
     private LocalDateTime createTime;
+    private Integer       clientType;
+    private String        loginuuid;
 
     public OaUser() {}
 
@@ -49,6 +51,8 @@ public class OaUser implements Serializable {
         this.enable = value.enable;
         this.pushId = value.pushId;
         this.createTime = value.createTime;
+        this.clientType = value.clientType;
+        this.loginuuid = value.loginuuid;
     }
 
     public OaUser(
@@ -64,7 +68,9 @@ public class OaUser implements Serializable {
         String        oaUserName,
         Integer       enable,
         String        pushId,
-        LocalDateTime createTime
+        LocalDateTime createTime,
+        Integer       clientType,
+        String        loginuuid
     ) {
         this.id = id;
         this.loginId = loginId;
@@ -79,6 +85,8 @@ public class OaUser implements Serializable {
         this.enable = enable;
         this.pushId = pushId;
         this.createTime = createTime;
+        this.clientType = clientType;
+        this.loginuuid = loginuuid;
     }
 
     @NotNull
@@ -197,6 +205,23 @@ public class OaUser implements Serializable {
         this.createTime = createTime;
     }
 
+    public Integer getClientType() {
+        return this.clientType;
+    }
+
+    public void setClientType(Integer clientType) {
+        this.clientType = clientType;
+    }
+
+    @Size(max = 36)
+    public String getLoginuuid() {
+        return this.loginuuid;
+    }
+
+    public void setLoginuuid(String loginuuid) {
+        this.loginuuid = loginuuid;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("OaUser (");
@@ -214,6 +239,8 @@ public class OaUser implements Serializable {
         sb.append(", ").append(enable);
         sb.append(", ").append(pushId);
         sb.append(", ").append(createTime);
+        sb.append(", ").append(clientType);
+        sb.append(", ").append(loginuuid);
 
         sb.append(")");
         return sb.toString();

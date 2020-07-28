@@ -100,8 +100,9 @@ public class OkHttpRequest {
 		return Result.fail("登录oa系统失败");
 	}
 
-	public boolean auth() {
-		String authUrl = "http://115.238.110.210:8998/emp/api/agent/client/link/home?agentid=-1&corpid=em4ce4068d933411eaaaec000c2985ba71&em_client_type=2";
+	public boolean auth(Integer type) {
+		String authUrl = "http://115.238.110.210:8998/emp/api/agent/client/link/home?agentid=-1&corpid=em4ce4068d933411eaaaec000c2985ba71&em_client_type="
+				+ type;
 		Request request = new Request.Builder().url(authUrl).addHeader("access_token", accessToken).get().build();
 		try {
 			Response response = client.newCall(request).execute();

@@ -76,6 +76,7 @@ public class UserServiceImpl implements IUserService {
 		record.setOaUserId(userId);
 		record.setOaUserName(userName);
 		record.setCreateTime(LocalDateTime.now());
+		record.setLoginuuid(addUserDto.getLoginUUID());
 		record.store();
 
 		return Result.success("新增成功");
@@ -103,6 +104,7 @@ public class UserServiceImpl implements IUserService {
 				.set(OA_USER.CLIENT_MODEL, addUserDto.getClientModel())
 				.set(OA_USER.DEVICE_NAME, addUserDto.getDeviceName()).set(OA_USER.DEVICE_ID, addUserDto.getDeviceId())
 				.set(OA_USER.OS_VERSION, addUserDto.getOsVersion()).set(OA_USER.OA_USER_NAME, userName)
+				.set(OA_USER.CLIENT_TYPE, addUserDto.getClientType()).set(OA_USER.LOGINUUID, addUserDto.getLoginUUID())
 				.where(OA_USER.LOGIN_ID.eq(addUserDto.getLoginId())).execute();
 		return Result.success("修改成功");
 
@@ -141,11 +143,10 @@ public class UserServiceImpl implements IUserService {
 	 */
 	@Override
 	public Result<List<Map<String, Object>>> getUserList() {
-		return Result.success(create
-				.select(OA_USER.LOGIN_ID.as("loginId"), OA_USER.PASSWORD, OA_USER.MOBILE,
-						OA_USER.CLIENT_MODEL.as("clientModel"), OA_USER.DEVICE_NAME.as("deviceName"),
-						OA_USER.DEVICE_ID.as("deviceId"), OA_USER.OS_VERSION.as("osVersion"), OA_USER.ENABLE,
-						OA_USER.PUSH_ID.as("pushId"))
+		return Result.success(create.select(OA_USER.LOGIN_ID.as("loginId"), OA_USER.PASSWORD, OA_USER.MOBILE,
+				OA_USER.CLIENT_MODEL.as("clientModel"), OA_USER.DEVICE_NAME.as("deviceName"),
+				OA_USER.DEVICE_ID.as("deviceId"), OA_USER.OS_VERSION.as("osVersion"), OA_USER.ENABLE,
+				OA_USER.PUSH_ID.as("pushId"), OA_USER.CLIENT_TYPE.as("clientType"), OA_USER.LOGINUUID.as("loginUUID"))
 				.from(OA_USER).orderBy(OA_USER.ENABLE, OA_USER.CREATE_TIME).fetchMaps());
 	}
 
