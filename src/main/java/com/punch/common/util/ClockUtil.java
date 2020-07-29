@@ -19,8 +19,8 @@ public class ClockUtil {
 	 */
 	public static Date getPunchOnTime() {
 		LocalDate now = LocalDate.now();
-		LocalTime beginTime = LocalTime.of(7, 50);
-		LocalTime endTime = LocalTime.of(8, 0);
+		LocalTime beginTime = LocalTime.of(7, 45);
+		LocalTime endTime = LocalTime.of(7, 55);
 		LocalDateTime beginDateTime = LocalDateTime.of(now, beginTime);
 		LocalDateTime endDateTime = LocalDateTime.of(now, endTime);
 		long random = random(beginDateTime, endDateTime);
@@ -35,7 +35,7 @@ public class ClockUtil {
 	public static Date getPunchOffTime() {
 		LocalDate now = LocalDate.now();
 		LocalTime beginTime = LocalTime.of(17, 10);
-		LocalTime endTime = LocalTime.of(18, 0);
+		LocalTime endTime = LocalTime.of(17, 30);
 		LocalDateTime beginDateTime = LocalDateTime.of(now, beginTime);
 		LocalDateTime endDateTime = LocalDateTime.of(now, endTime);
 		long random = random(beginDateTime, endDateTime);

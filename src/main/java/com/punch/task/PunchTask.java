@@ -12,12 +12,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.punch.common.enums.PunchType;
 import com.punch.service.IPunchService;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 打卡
  *
  * @author xiachao
  * @date 2020/07/22 15:44
  */
+@Slf4j
 public class PunchTask extends QuartzJobBean {
 
 	@Resource
@@ -28,7 +31,7 @@ public class PunchTask extends QuartzJobBean {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
 		Object o = jobDataMap.get("map");
 		JSONObject jsonObject = JSON.parseObject(o.toString());
-		PunchType punchType = (PunchType) jsonObject.get("punchTask");
+		PunchType punchType = PunchType.valueOf(jsonObject.getString("punchTask"));
 		punchService.punch(jsonObject.getString("login_id"), jsonObject.getString("push_id"), punchType);
 	}
 }

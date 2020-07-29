@@ -53,7 +53,8 @@ public class JobTask extends QuartzJobBean {
 				}
 				if (LocalTime.now().isBefore(LocalTime.of(7, 30))) {
 					// 上班打卡
-					map.put("punchTask", PunchType.PUNCH_ON);
+					PunchType punchOn = PunchType.PUNCH_ON;
+					map.put("punchTask", punchOn);
 					apiBootQuartzService.newJob(ApiBootOnceJobWrapper.Context().jobClass(PunchTask.class)
 							.param(ApiBootJobParamWrapper.wrapper().put("map", JSON.toJSONString(map)))
 							.startAtTime(ClockUtil.getPunchOnTime()).wrapper());
