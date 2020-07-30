@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.punch.common.entity.Result;
 import com.punch.model.LoginDto;
+import com.punch.model.PunchDto;
 import com.punch.service.ILoginService;
 
 /**
@@ -30,6 +31,14 @@ public class LoginController {
 			return Result.fail(bindingResult);
 		}
 		return loginService.login(loginDto);
+	}
+
+	@PostMapping(value = "/userLogin")
+	public Result<String> userLogin(@RequestBody @Validated PunchDto punchDto, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return Result.fail(bindingResult);
+		}
+		return loginService.userLogin(punchDto);
 	}
 
 }

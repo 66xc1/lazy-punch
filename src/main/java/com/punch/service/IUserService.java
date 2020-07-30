@@ -50,6 +50,14 @@ public interface IUserService {
 	/**
 	 * 查询用户
 	 *
+	 * @param dto dto
+	 * @return result
+	 */
+	Result<Map<String, Object>> getUser(PunchDto dto);
+
+	/**
+	 * 查询用户
+	 *
 	 * @return result
 	 */
 	Result<List<Map<String, Object>>> getUserList();

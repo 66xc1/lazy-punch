@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -134,6 +135,22 @@ public class UserServiceImpl implements IUserService {
 		create.update(OA_USER).set(OA_USER.PUSH_ID, bindPushDto.getPushId())
 				.where(OA_USER.LOGIN_ID.eq(bindPushDto.getLoginId())).execute();
 		return Result.success();
+	}
+
+	/**
+	 * 查询用户
+	 *
+	 * @param dto dto
+	 * @return result
+	 */
+	@Override
+	public Result<Map<String, Object>> getUser(PunchDto dto) {
+		Record record = create.select(OA_USER.OA_USER_NAME.as("userName"), OA_USER.MOBILE, OA_USER.ENABLE).from(OA_USER)
+				.where(OA_USER.LOGIN_ID.eq(dto.getLoginId())).fetchOne();
+		if (null == record) {
+			return Result.fail("用户不存在");
+		}
+		return Result.success(record.intoMap());
 	}
 
 	/**

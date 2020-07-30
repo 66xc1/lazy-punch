@@ -1,5 +1,6 @@
 package com.punch.service.impl;
 
+import static com.punch.entity.Tables.OA_USER;
 import static com.punch.entity.Tables.SYS_USER;
 
 import javax.annotation.Resource;
@@ -8,8 +9,10 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
 import com.punch.common.entity.Result;
+import com.punch.entity.tables.records.OaUserRecord;
 import com.punch.entity.tables.records.SysUserRecord;
 import com.punch.model.LoginDto;
+import com.punch.model.PunchDto;
 import com.punch.service.ILoginService;
 
 /**
@@ -38,5 +41,20 @@ public class LoginServiceImpl implements ILoginService {
 			return Result.fail("密码错误");
 		}
 		return Result.success();
+	}
+
+	/**
+	 * 普通用户登录
+	 *
+	 * @param dto dto
+	 * @return result
+	 */
+	@Override
+	public Result<String> userLogin(PunchDto dto) {
+		OaUserRecord record = create.fetchOne(OA_USER, OA_USER.LOGIN_ID.eq(dto.getLoginId()));
+		if (null == record) {
+			return Result.fail("登录用户不存在");
+		}
+		return Result.success(dto.getLoginId());
 	}
 }

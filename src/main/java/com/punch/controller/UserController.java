@@ -48,6 +48,14 @@ public class UserController {
 		return userService.addUser(addUserDto);
 	}
 
+	@PostMapping(value = "/getUser")
+	public Result<Map<String, Object>> getUser(@RequestBody @Valid PunchDto dto, BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return Result.fail(bindingResult);
+		}
+		return userService.getUser(dto);
+	}
+
 	@PostMapping(value = "/getUserList")
 	public Result<List<Map<String, Object>>> getUserList() {
 		return userService.getUserList();
