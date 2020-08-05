@@ -11,7 +11,6 @@ import javax.annotation.Resource;
 
 import org.jooq.DSLContext;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -138,6 +137,19 @@ public class PunchServiceImpl implements IPunchService {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * 全员发送通知
+	 *
+	 * @param content 内容
+	 */
+	@Override
+	@Async
+	public void sendAllMessage(String content) {
+		List<String> list = create.select(OA_USER.PUSH_ID).from(OA_USER).where(OA_USER.ENABLE.eq(1))
+				.and(OA_USER.PUSH_ID.isNotNull()).fetchInto(String.class);
+		list.forEach(uid -> messageService.sendMessage(uid, content));
 	}
 
 }

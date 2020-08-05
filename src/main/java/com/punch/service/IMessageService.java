@@ -25,4 +25,5 @@ public interface IMessageService {
 	 * @return result
 	 */
 	Result<List<GetPusherListVo>> getPusherList();
+
 }

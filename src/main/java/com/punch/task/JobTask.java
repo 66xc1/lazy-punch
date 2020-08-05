@@ -2,6 +2,7 @@ package com.punch.task;
 
 import static com.punch.entity.Tables.OA_USER;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -17,10 +18,12 @@ import org.quartz.JobExecutionException;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.punch.common.enums.EnableType;
 import com.punch.common.enums.PunchType;
 import com.punch.common.util.ClockUtil;
 import com.punch.common.util.OkHttpUtil;
+import com.punch.service.IPunchService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,11 +40,13 @@ public class JobTask extends QuartzJobBean {
 	@Resource
 	private ApiBootQuartzService apiBootQuartzService;
 
+	@Resource
+	private IPunchService punchService;
+
 	@Override
 	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
-		String workDay = "0";
-		String result = OkHttpUtil.get("http://tool.bitefu.net/jiari?d=today");
-		if (!result.equals(workDay)) {
+		// 非工作日不打卡
+		if (workDay() != 0) {
 			return;
 		}
 		List<Map<String, Object>> list = create.select().from(OA_USER)
@@ -69,5 +74,33 @@ public class JobTask extends QuartzJobBean {
 				}
 			}
 		}
+	}
+
+	/**
+	 * 判断是否工作日
+	 *
+	 * @return int 0工作日 1非工作日
+	 */
+	private int workDay() {
+		boolean flag = false;
+		int workDay = 1;
+		int max = 10;
+		String url = "http://api.tianapi.com/txapi/jiejiari/index?key=13e7f466941f1b7661d8c01fd3fbcdf8&date="
+				+ LocalDate.now().toString();
+		for (int i = 0; i < max; i++) {
+			String result = OkHttpUtil.get(url);
+			if (result != null) {
+				JSONObject jsonObject = JSON.parseObject(result);
+				if (200 == jsonObject.getInteger("code")) {
+					flag = true;
+					workDay = jsonObject.getJSONArray("newslist").getJSONObject(0).getInteger("isnotwork");
+					break;
+				}
+			}
+		}
+		if (!flag) {
+			punchService.sendAllMessage("打卡服务异常，请手动打卡！！！");
+		}
+		return workDay;
 	}
 }

@@ -129,7 +129,6 @@ public class OkHttpRequest {
 		String languageIdWeaver;
 		String jSessionId;
 		String host = "http://115.238.110.210";
-//			System.setProperty("webdriver.chrome.driver", this.chrome);
 		// 创建chrome参数对象
 		ChromeOptions options = new ChromeOptions();
 
@@ -142,27 +141,33 @@ public class OkHttpRequest {
 		options.addArguments("--whitelisted-ips=");
 		options.addArguments("blink-settings=imagesEnabled=false");
 		options.addArguments("--disable-javascript");
+		WebDriver driver = null;
+		try {
+			driver = new ChromeDriver(service, options);
 
-		WebDriver driver = new ChromeDriver(service, options);
+			driver.get(toUrl);
 
-		driver.get(toUrl);
+			WebDriverWait wait = new WebDriverWait(driver, 20);
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.id("more")));
+			Set<org.openqa.selenium.Cookie> coo = driver.manage().getCookies();
+			log.info("coo={}", coo);
 
-		WebDriverWait wait = new WebDriverWait(driver, 20);
-		wait.until(ExpectedConditions.presenceOfElementLocated(By.id("more")
-//					.cssSelector("#entrance-page")
-		));
-		Set<org.openqa.selenium.Cookie> coo = driver.manage().getCookies();
-		log.info("coo={}", coo);
+			loginIdWeaver = coo.stream().filter(cookie -> "loginidweaver".equals(cookie.getName()))
+					.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
+			languageIdWeaver = coo.stream().filter(cookie -> "languageidweaver".equals(cookie.getName()))
+					.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
+			jSessionId = coo.stream().filter(cookie -> "ecology_JSessionid".equals(cookie.getName()))
+					.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
 
-		loginIdWeaver = coo.stream().filter(cookie -> "loginidweaver".equals(cookie.getName()))
-				.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
-		languageIdWeaver = coo.stream().filter(cookie -> "languageidweaver".equals(cookie.getName()))
-				.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
-		jSessionId = coo.stream().filter(cookie -> "ecology_JSessionid".equals(cookie.getName()))
-				.map(org.openqa.selenium.Cookie::getValue).collect(Collectors.toList()).get(0);
-
-		driver.close();
-		driver.quit();
+		} catch (Exception e) {
+			log.error("getCookies执行异常", e);
+			return false;
+		} finally {
+			if (driver != null) {
+				driver.close();
+				driver.quit();
+			}
+		}
 
 		if (null != loginIdWeaver && null != languageIdWeaver && null != jSessionId) {
 			List<okhttp3.Cookie> cookieList = new ArrayList<>();

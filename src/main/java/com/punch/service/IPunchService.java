@@ -17,4 +17,11 @@ public interface IPunchService {
 	 */
 	void punch(String loginId, String pushId, PunchType type);
 
+	/**
+	 * 全员发送通知
+	 *
+	 * @param content 内容
+	 */
+	void sendAllMessage(String content);
+
 }
