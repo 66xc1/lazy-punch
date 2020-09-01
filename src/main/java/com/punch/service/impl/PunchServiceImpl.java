@@ -113,7 +113,7 @@ public class PunchServiceImpl implements IPunchService {
 			}
 			// 识别验证码
 			org.json.JSONObject captcha = aipOcr.basicGeneralUrl(oaProperties.getCaptcha() + "?key=" + uuid, null);
-			if (captcha.getInt("words_result_num") == 1) {
+			if (captcha.optInt("words_result_num") == 1) {
 				String captchaText = captcha.getJSONArray("words_result").getJSONObject(0).getString("words");
 				if (captchaText.length() == 4) {
 					dto.setCaptchaText(captchaText);

@@ -11,6 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.baidu.aip.ocr.AipOcr;
+import com.punch.common.entity.OaProperties;
 import com.punch.common.enums.PunchType;
 import com.punch.common.util.OkHttpUtil;
 import com.punch.service.IPunchService;
@@ -58,5 +60,20 @@ class PunchServiceImplTest {
 			punchService.sendAllMessage("打卡服务异常，请手动打卡！！！");
 		}
 		log.info("workDay={}", workDay);
+	}
+
+	@Resource
+	private AipOcr aipOcr;
+
+	@Resource
+	private OaProperties oaProperties;
+
+	@Test
+	void checkCaptcha() throws InterruptedException {
+		for (int i = 0; i < 10; i++) {
+			org.json.JSONObject jsonObject = aipOcr.basicGeneralUrl(oaProperties.getCaptcha(), null);
+			log.info(jsonObject.toString());
+			Thread.sleep(1000);
+		}
 	}
 }

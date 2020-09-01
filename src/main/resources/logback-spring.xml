@@ -46,7 +46,7 @@
         </encoder>
     </appender>
     <!--需要调试sql的时候才放开-->
-    <logger name="org.jooq" level="DEBUG"/>
+    <logger name="org.jooq" level="INFO"/>
     <!-- 日志输出级别 -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

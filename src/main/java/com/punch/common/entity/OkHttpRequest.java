@@ -164,7 +164,6 @@ public class OkHttpRequest {
 			return false;
 		} finally {
 			if (driver != null) {
-				driver.close();
 				driver.quit();
 			}
 		}
