@@ -163,8 +163,12 @@ public class OkHttpRequest {
 			log.error("getCookies执行异常", e);
 			return false;
 		} finally {
-			if (driver != null) {
-				driver.quit();
+			try {
+				if (driver != null) {
+					driver.quit();
+				}
+			} catch (Exception e) {
+				log.error("driver quit异常", e);
 			}
 		}
 
